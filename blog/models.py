@@ -2,9 +2,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text, ForeignKey
 from datetime import datetime
 from typing import List
-from . import db
+from . import db, login_manager
+from flask_login import UserMixin
 
-class User(db.Model):
+
+@login_manager.user_loader
+def user_loader(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(
         String(20), unique=True, nullable=False)
